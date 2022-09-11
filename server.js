@@ -29,20 +29,21 @@ app.post('/shortUrls', async (req, res) => {
         console.log(exists)
     })
     const findUrl = await ShortUrl.findOne({ full: req.body.fullUrl })
-    if (isExist && findUrl === req.body.fullUrl) {
-        try {
-            await ShortUrl.create({ full: req.body.fullUrl })
-            res.redirect('/')
-        } catch (error) {
-            console.log(err);
-            res.status(500).json('Server Error');
-        }
+    // if (isExist && findUrl === req.body.fullUrl) {
+    try {
+        await ShortUrl.create({ full: req.body.fullUrl })
+        res.redirect('/')
+    } catch (error) {
+        console.log(err);
+        res.status(500).json('Server Error');
     }
-    else {
-        res.status(400).json('Invalid Full Link');
-    }
+    //  }
+    // else {
+    //     res.status(400).json('Invalid Full Link');
+    // }
 
 })
+
 
 app.get('/:shortUrl', async (req, res) => {
     const shortUrl = await ShortUrl.findOne({ short: req.params.shortUrl })
@@ -53,4 +54,7 @@ app.get('/:shortUrl', async (req, res) => {
 
     res.redirect(shortUrl.full)
 })
+
+
+
 app.listen(process.env.PORT || 8000)
