@@ -14,7 +14,12 @@
   <body>
     <div class="container">
       <h1>URL Shrinker</h1>
-      <form action="/shortUrls" method="POST" class="my-4 form-inline">
+      <form
+        id="formAdShortUrl"
+        action="/shortUrls"
+        method="POST"
+        class="my-4 form-inline"
+      >
         <label for="fullUrl" class="sr-only">URL</label>
         <input
           placeholder="URL"
@@ -34,7 +39,7 @@
             <th>Clicks</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="shortUrlList">
           <% shortUrls.forEach(shortUrl => { %>
           <tr>
             <td>
@@ -49,5 +54,51 @@
         </tbody>
       </table>
     </div>
+    <script>
+      const formAddUrl = document.getElementById('formAdShortUrl');
+      const shortUrlList = document.getElementById('shortUrlList');
+      formAddUrl.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const fullUrl = this.elements.fullUrl.value;
+        console.log(this.elements.fullUrl.value);
+        fetch('/api/urls', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fullUrl }),
+        })
+          .then((res) => {
+            if (!res.ok) {
+              const error = new Error();
+              error.status = res.status;
+              throw error;
+            }
+            return res.json();
+          })
+          .then((res) => {
+            shortUrlList.insertAdjacentHTML(
+              'afterbegin',
+              `<tr>
+            <td>
+              <a href="${res.full}"> ${res.full}</a>
+            </td>
+            <td>
+              <a href="/api/urls/${res.short}">${res.short}></a>
+            </td>
+            <td>${res.clicks}</td>
+          </tr>`
+            );
+          })
+          .catch((error) => {
+            if (error.status === 409) {
+              formAddUrl.insertAdjacentHTML(
+                'afterend',
+                `<p>THis URL already exist</p>`
+              );
+            }
+          });
+      });
+    </script>
   </body>
 </html>

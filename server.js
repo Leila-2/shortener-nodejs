@@ -1,25 +1,19 @@
 const express = require('express')
 const mongoose = require('mongoose')
 require('dotenv').config()
-
+require('./cronDelete')
 //const ShortUrl = require('./models/shortUrl')
 const shortenerRouter = require('./routes/api/shortener')
+const shortenerPages = require('./routes/pages/shortener')
 const app = express()
 
 
-mongoose.connect(process.env.DB_HOST, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => console.log('database connect success'))
-    .catch((error) => {
-        console.log(error.message)
-        process.exit(1)
-    })
 
 app.set('view engine', 'ejs')
-app.use(express.urlencoded({ extended: false }))
+
 app.use(express.json())
-app.use('/', shortenerRouter)
+app.use('/api/urls', shortenerRouter)
+app.use('/', shortenerPages)
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Not found' })
@@ -29,4 +23,8 @@ app.use((err, req, res, next) => {
     res.status(status).json({ message })
 })
 
-app.listen(process.env.PORT || 8000)
+mongoose.connect(process.env.DB_HOST).then(() => app.listen(process.env.PORT || 8000))
+    .catch((error) => {
+        console.log(error.message)
+        process.exit(1)
+    })

@@ -1,9 +1,9 @@
 const getAll = require('./getAll')
-const getById = require('./getById')
+const redirectToUrl = require('./redirectToUrl')
 const add = require('./add')
 
 module.exports = {
     getAll,
-    getById,
+    redirectToUrl,
     add
 }

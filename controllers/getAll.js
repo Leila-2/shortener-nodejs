@@ -1,4 +1,4 @@
-const ShortUrl = require('../models/shortUrl')
+const { ShortUrl } = require('../models/shortUrl')
 
 const getAll = async (req, res) => {
     try {
