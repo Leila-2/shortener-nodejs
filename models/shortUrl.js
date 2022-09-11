@@ -17,7 +17,7 @@ const shortUrlSchema = mongoose.Schema({
         default: 0
     },
     date: {
-        type: String,
+        type: Date,
         default: Date.now,
     }
 })
